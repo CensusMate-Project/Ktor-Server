@@ -1,0 +1,73 @@
+package org.censusmate.data.database
+
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
+import io.ktor.server.application.Application
+import kotlinx.coroutines.Dispatchers
+import org.censusmate.data.database.tables.UserAuthTable
+import org.censusmate.data.database.tables.UserTable
+import org.censusmate.security.PasswordHasher
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
+import io.ktor.server.application.log
+import org.jetbrains.exposed.sql.Schema
+
+object DatabaseFactory {
+    fun init(app: Application) {
+        val config = HikariConfig().apply {
+            jdbcUrl = "jdbc:postgresql://127.0.0.1:45432/censusmate?sslmode=disable"
+            driverClassName = "org.postgresql.Driver"
+            username = "user"
+            password = "password"
+            maximumPoolSize = 10
+            isAutoCommit = false
+            transactionIsolation = "TRANSACTION_REPEATABLE_READ"
+        }
+
+        val dataSource = HikariDataSource(config)
+        Database.connect(dataSource)
+
+        transaction {
+            SchemaUtils.createSchema(Schema("auth"))
+            SchemaUtils.createMissingTablesAndColumns(
+                UserTable,
+                UserAuthTable
+            )
+        }
+
+        app.log.info("Database initialized and connected successfully")
+    }
+
+    suspend fun <T> dbTransactionQuery(block: suspend () -> T): T =
+        newSuspendedTransaction(Dispatchers.IO) { block() }
+}
+
+fun Application.createDefaultAdminIfNotExists() {
+    transaction {
+        val adminExists = UserTable
+            .selectAll()
+            .where { UserTable.role eq "administrator" }
+            .any()
+
+        if (!adminExists) {
+            log.warn("No admin found — creating default admin: admin@census.ru / admin123")
+
+            val adminId = UserTable.insert {
+                it[email] = "admin@census.ru"
+                it[firstName] = "Admin"
+                it[lastName] = "Census"
+                it[role] = "administrator"
+                it[defaultUser] = true
+            }[UserTable.id]
+
+            UserAuthTable.insert {
+                it[userId] = adminId
+                it[password_hash] = PasswordHasher.hash("admin123")
+            }
+        }
+    }
+}
