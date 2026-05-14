@@ -24,8 +24,12 @@ fun Application.configureRouting() {
             call.respondText("pong")
         }
         route("/api") {
-            AppContainer.authController.configure(this)
-            AppContainer.userController.configure(this)
+            route("/auth") {
+                AppContainer.authController.configure(this)
+            }
+            route("/users") {
+                AppContainer.userController.configure(this)
+            }
         }
     }
 }

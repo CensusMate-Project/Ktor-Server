@@ -13,6 +13,8 @@ enum class RoleType {
         fun fromDbValue(value: String): RoleType =
             entries.find { it.name.equals(value, ignoreCase = true) }
                 ?: throw IllegalArgumentException("Unknown role: $value")
+
+        fun getAllRoles(): List<String> = entries.map { it.name.lowercase() }
     }
 }
 

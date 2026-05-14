@@ -15,6 +15,12 @@ data class UserResponseDto(
 )
 
 @Serializable
+data class UsersResponseDto(
+    val users: List<UserResponseDto>,
+    val pagination: PaginationResponseDto
+)
+
+@Serializable
 data class CreateUserRequestDto(
     val email: String,
     val password: String,
