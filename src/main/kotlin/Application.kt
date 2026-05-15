@@ -3,6 +3,7 @@ package org.censusmate
 import io.github.smiley4.ktoropenapi.OpenApi
 import io.github.smiley4.ktoropenapi.config.AuthScheme
 import io.github.smiley4.ktoropenapi.config.AuthType
+import io.github.smiley4.ktoropenapi.config.ExampleEncoder
 import io.github.smiley4.ktoropenapi.config.SchemaGenerator
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -29,6 +30,9 @@ fun Application.module() {
     install(OpenApi) {
         schemas {
             generator = SchemaGenerator.kotlinx(json)
+        }
+        examples {
+            exampleEncoder = ExampleEncoder.kotlinx(json)
         }
         info {
             title = "Census API"
