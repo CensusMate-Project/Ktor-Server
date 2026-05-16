@@ -2,7 +2,6 @@ package org.censusmate.controller
 
 import io.github.smiley4.ktoropenapi.*
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.auth.authenticate
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -19,7 +18,7 @@ import org.censusmate.domain.usecase.user.CreateUserUseCase
 import org.censusmate.domain.usecase.user.GetUserUseCase
 import org.censusmate.domain.usecase.user.GetUsersUseCase
 import org.censusmate.domain.usecase.user.UpdateUserUseCase
-import org.censusmate.plugins.ErrorResponse
+import org.censusmate.plugins.ErrorResponseDto
 import org.censusmate.utils.requireRole
 import org.censusmate.utils.uuidParam
 
@@ -55,7 +54,7 @@ class UserController(
                             }
                             HttpStatusCode.Forbidden to {
                                 description = "Недостаточно прав"
-                                body<ErrorResponse>()
+                                body<ErrorResponseDto>()
                             }
                         }
                     }) {
@@ -96,15 +95,15 @@ class UserController(
                             }
                             HttpStatusCode.Conflict to {
                                 description = "Пользователь с таким email уже существует"
-                                body<ErrorResponse>()
+                                body<ErrorResponseDto>()
                             }
                             HttpStatusCode.BadRequest to {
                                 description = "Некорректные данные (пустой email, короткий пароль, неверная роль)"
-                                body<ErrorResponse>()
+                                body<ErrorResponseDto>()
                             }
                             HttpStatusCode.Forbidden to {
                                 description = "Недостаточно прав"
-                                body<ErrorResponse>()
+                                body<ErrorResponseDto>()
                             }
                         }
                     }) {
@@ -132,11 +131,11 @@ class UserController(
                                 }
                                 HttpStatusCode.NotFound to {
                                     description = "Пользователь не найден"
-                                    body<ErrorResponse>()
+                                    body<ErrorResponseDto>()
                                 }
                                 HttpStatusCode.Forbidden to {
                                     description = "Недостаточно прав"
-                                    body<ErrorResponse>()
+                                    body<ErrorResponseDto>()
                                 }
                             }
                         }) {
@@ -174,15 +173,15 @@ class UserController(
                                 }
                                 HttpStatusCode.NotFound to {
                                     description = "Пользователь не найден"
-                                    body<ErrorResponse>()
+                                    body<ErrorResponseDto>()
                                 }
                                 HttpStatusCode.Conflict to {
                                     description = "Email уже занят другим пользователем"
-                                    body<ErrorResponse>()
+                                    body<ErrorResponseDto>()
                                 }
                                 HttpStatusCode.Forbidden to {
                                     description = "Недостаточно прав"
-                                    body<ErrorResponse>()
+                                    body<ErrorResponseDto>()
                                 }
                             }
                         }) {
@@ -220,11 +219,11 @@ class UserController(
                                 }
                                 HttpStatusCode.NotFound to {
                                     description = "Пользователь не найден"
-                                    body<ErrorResponse>()
+                                    body<ErrorResponseDto>()
                                 }
                                 HttpStatusCode.Forbidden to {
                                     description = "Недостаточно прав"
-                                    body<ErrorResponse>()
+                                    body<ErrorResponseDto>()
                                 }
                             }
                         }) {

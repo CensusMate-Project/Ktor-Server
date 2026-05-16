@@ -4,7 +4,6 @@ import io.github.smiley4.ktoropenapi.*
 import io.ktor.http.*
 import io.ktor.server.auth.authenticate
 import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 import org.censusmate.data.dto.LoginRequestDto
@@ -13,7 +12,7 @@ import org.censusmate.data.dto.TokenResponseDto
 import org.censusmate.data.mapper.toMeResponseDto
 import org.censusmate.domain.usecase.auth.GetMeUseCase
 import org.censusmate.domain.usecase.auth.LoginUseCase
-import org.censusmate.plugins.ErrorResponse
+import org.censusmate.plugins.ErrorResponseDto
 import org.censusmate.utils.requirePrincipal
 
 class AuthController(
@@ -45,11 +44,11 @@ class AuthController(
                         }
                         HttpStatusCode.Unauthorized to {
                             description = "Неверный email или пароль"
-                            body<ErrorResponse>()
+                            body<ErrorResponseDto>()
                         }
                         HttpStatusCode.Forbidden to {
                             description = "Аккаунт заблокирован администратором"
-                            body<ErrorResponse>()
+                            body<ErrorResponseDto>()
                         }
                     }
                 }) {
@@ -70,7 +69,7 @@ class AuthController(
                             }
                             HttpStatusCode.Unauthorized to {
                                 description = "Токен отсутствует или истёк"
-                                body<ErrorResponse>()
+                                body<ErrorResponseDto>()
                             }
                         }
                     }) {
