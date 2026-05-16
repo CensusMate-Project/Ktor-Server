@@ -1,7 +1,5 @@
 package org.censusmate.domain.model
 
-import org.censusmate.data.dto.PaginationResponseDto
-
 data class PaginationDto(
     val page: Int,
     val limit: Int,
