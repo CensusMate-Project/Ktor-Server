@@ -2,6 +2,7 @@ package org.censusmate.di
 
 import io.ktor.server.application.Application
 import io.ktor.server.application.log
+import org.censusmate.config.Config
 import org.censusmate.controller.AuthController
 import org.censusmate.controller.UserController
 import org.censusmate.data.repository.UserRepositoryImpl
@@ -16,6 +17,11 @@ import org.censusmate.domain.usecase.user.UpdateUserUseCase
 import kotlin.getValue
 
 object AppContainer {
+    lateinit var config: Config
+        private set
+
+    val passwordMinLen get() = config.usersConfig.passwordMinLen
+
     val userRepository: UserRepository by lazy { UserRepositoryImpl() }
 
     val loginUseCase: LoginUseCase by lazy { LoginUseCase(userRepository) }
@@ -25,17 +31,15 @@ object AppContainer {
     val createUserUseCase: CreateUserUseCase by lazy { CreateUserUseCase(userRepository) }
     val getUsersUseCase: GetUsersUseCase by lazy { GetUsersUseCase(userRepository) }
     val getUserUseCase: GetUserUseCase by lazy { GetUserUseCase(userRepository) }
-    val updateUserUseCase: UpdateUserUseCase by lazy { UpdateUserUseCase(userRepository) }
+    val updateUserUseCase: UpdateUserUseCase by lazy { UpdateUserUseCase(userRepository, passwordMinLen) }
 
     val authController: AuthController by lazy { AuthController(loginUseCase, getMeUseCase) }
     val userController: UserController by lazy {
-        UserController(
-            getUsersUseCase,
-            getUserUseCase,
-            createUserUseCase,
-            updateUserUseCase,
-            blockUserUseCase
-        )
+        UserController(getUsersUseCase, getUserUseCase, createUserUseCase, updateUserUseCase, blockUserUseCase)
+    }
+
+    fun init(config: Config) {
+        this.config = config
     }
 }
 

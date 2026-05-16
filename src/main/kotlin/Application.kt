@@ -12,6 +12,7 @@ import io.ktor.server.netty.Netty
 import org.censusmate.config.Config
 import org.censusmate.data.database.DatabaseFactory
 import org.censusmate.data.database.createDefaultAdminIfNotExists
+import org.censusmate.di.AppContainer
 import org.censusmate.di.appModule
 import org.censusmate.plugins.configureAuthentication
 import org.censusmate.plugins.configureCORS
@@ -24,19 +25,18 @@ import org.censusmate.security.JwtConfig
 
 fun main() {
     val config = Config.load()
+    AppContainer.init(config)
 
     embeddedServer(
         Netty,
         port = config.server.port,
-        host = "127.0.0.1"
+        host = config.server.host
     ) {
-        module(config)
+        module()
     }.start(wait = true)
 }
 
-fun Application.module(config: Config = Config.load()) {
-    JwtConfig.init(config.jwt)
-
+fun Application.module() {
     install(OpenApi) {
         schemas {
             generator = SchemaGenerator.kotlinx(json)
@@ -63,6 +63,9 @@ fun Application.module(config: Config = Config.load()) {
         }
     }
 
+    val config = AppContainer.config
+
+    JwtConfig.init(config.jwt)
     DatabaseFactory.init(this, config.database)
     createDefaultAdminIfNotExists()
 

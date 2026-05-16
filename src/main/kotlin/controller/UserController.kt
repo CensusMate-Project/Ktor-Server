@@ -19,6 +19,8 @@ import org.censusmate.domain.usecase.user.GetUserUseCase
 import org.censusmate.domain.usecase.user.GetUsersUseCase
 import org.censusmate.domain.usecase.user.UpdateUserUseCase
 import org.censusmate.plugins.ErrorResponseDto
+import org.censusmate.utils.AppError
+import org.censusmate.utils.callerId
 import org.censusmate.utils.requireRole
 import org.censusmate.utils.uuidParam
 
@@ -187,6 +189,11 @@ class UserController(
                         }) {
                             call.requireRole(RoleType.ADMINISTRATOR)
                             val id = call.uuidParam("id")
+
+                            if (call.callerId() == id) {
+                                throw AppError.Forbidden("You cannot update your own profile through this endpoint")
+                            }
+
                             val dto = call.receive<UpdateUserRequestDto>()
                             val user = updateUserUseCase(id, dto)
                             call.respond(HttpStatusCode.OK, user.toResponseDto())
