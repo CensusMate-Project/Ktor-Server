@@ -9,7 +9,7 @@ import org.censusmate.domain.model.User
 import org.censusmate.security.principal.UserPrincipal
 import java.util.Date
 import java.util.UUID
-import org.censusmate.Config.JwtConfig as Config
+import org.censusmate.config.Config.JwtConfig as Config
 
 object JwtConfig {
     private lateinit var secret: String

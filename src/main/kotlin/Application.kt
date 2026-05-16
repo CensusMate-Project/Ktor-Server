@@ -9,6 +9,7 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import org.censusmate.config.Config
 import org.censusmate.data.database.DatabaseFactory
 import org.censusmate.data.database.createDefaultAdminIfNotExists
 import org.censusmate.di.appModule

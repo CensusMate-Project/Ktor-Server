@@ -1,4 +1,4 @@
-package org.censusmate
+package org.censusmate.config
 
 data class Config(
     val database: DatabaseConfig,

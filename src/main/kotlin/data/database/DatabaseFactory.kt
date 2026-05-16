@@ -14,7 +14,7 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import io.ktor.server.application.log
-import org.censusmate.Config
+import org.censusmate.config.Config
 import org.jetbrains.exposed.sql.Schema
 
 object DatabaseFactory {
