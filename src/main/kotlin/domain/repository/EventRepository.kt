@@ -11,4 +11,5 @@ interface EventRepository {
     suspend fun create(name: String, startDatetime: LocalDateTime, endDatetime: LocalDateTime): Event
     suspend fun update(id: UUID, name: String?, startDatetime: LocalDateTime?, endDatetime: LocalDateTime?): Event?
     suspend fun delete(id: UUID): Boolean
+    suspend fun hasOverlap(start: LocalDateTime, end: LocalDateTime, excludeId: UUID? = null): Boolean
 }

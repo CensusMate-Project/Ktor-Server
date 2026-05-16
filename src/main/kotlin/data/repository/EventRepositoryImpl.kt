@@ -75,4 +75,21 @@ class EventRepositoryImpl : EventRepository {
     override suspend fun delete(id: UUID): Boolean = dbTransactionQuery {
         EventTable.deleteWhere { EventTable.id eq id } > 0
     }
+
+    override suspend fun hasOverlap(
+        start: LocalDateTime,
+        end: LocalDateTime,
+        excludeId: UUID?
+    ): Boolean = dbTransactionQuery {
+        EventTable.selectAll()
+            .where {
+                val overlap = (EventTable.startDatetime less end) and
+                        (EventTable.endDatetime greater start)
+                if (excludeId != null)
+                    overlap and (EventTable.id neq excludeId)
+                else
+                    overlap
+            }
+            .any()
+    }
 }
