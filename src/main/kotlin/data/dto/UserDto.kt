@@ -35,10 +35,12 @@ data class CreateUserRequestDto(
 @Serializable
 data class UpdateUserRequestDto(
     @SerialName("first_name")
-    val firstName: String,
+    val firstName: String? = null,
     @SerialName("last_name")
-    val lastName: String,
-    val email: String? = null
+    val lastName: String? = null,
+    val email: String? = null,
+    @SerialName("new_password")
+    val newPassword: String? = null
 )
 
 @Serializable

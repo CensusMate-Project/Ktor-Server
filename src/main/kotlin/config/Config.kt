@@ -3,6 +3,7 @@ package org.censusmate.config
 data class Config(
     val database: DatabaseConfig,
     val jwt: JwtConfig,
+    val usersConfig: UsersConfig,
     val server: ServerConfig
 ) {
     data class DatabaseConfig(
@@ -17,6 +18,10 @@ data class Config(
         val issuer: String,
         val audience: String,
         val expirationHours: Long,
+    )
+
+    data class UsersConfig(
+        val passwordMinLen: Int
     )
 
     data class ServerConfig(
@@ -40,6 +45,10 @@ data class Config(
                 expirationHours = System.getenv("JWT_EXPIRATION_HOURS")?.toLongOrNull() ?: 24L
             )
 
+            val usersConfig = UsersConfig(
+                passwordMinLen = System.getenv("USERS_PASSWORD_MIN_LEN")?.toIntOrNull() ?: 8
+            )
+
             val serverConfig = ServerConfig(
                 host = System.getenv("SERVER_HOST") ?: "127.0.0.1",
                 port = System.getenv("SERVER_PORT")?.toIntOrNull() ?: 3000
@@ -48,6 +57,7 @@ data class Config(
             return Config(
                 database = databaseConfig,
                 jwt = jwtConfig,
+                usersConfig = usersConfig,
                 server = serverConfig
             )
         }

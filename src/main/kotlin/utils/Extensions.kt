@@ -24,3 +24,5 @@ fun ApplicationCall.requireRole(vararg roles: RoleType) {
         throw AppError.Forbidden("This action requires one of the following roles: ${roles.joinToString()}")
     }
 }
+
+fun ApplicationCall.callerId(): UUID = requirePrincipal().userId

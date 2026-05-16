@@ -67,7 +67,7 @@ fun Application.createDefaultAdminIfNotExists() {
 
             UserAuthTable.insert {
                 it[userId] = adminId
-                it[password_hash] = PasswordHasher.hash("admin123")
+                it[passwordHash] = PasswordHasher.hash("admin123")
             }
         }
     }

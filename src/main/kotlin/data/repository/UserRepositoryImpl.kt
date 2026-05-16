@@ -51,7 +51,7 @@ class UserRepositoryImpl : UserRepository {
             .selectAll()
             .where { UserAuthTable.userId eq userId }
             .singleOrNull()
-            ?.get(UserAuthTable.password_hash)
+            ?.get(UserAuthTable.passwordHash)
     }
 
     override suspend fun updateLastLogin(userId: UUID) = dbTransactionQuery {
@@ -77,7 +77,7 @@ class UserRepositoryImpl : UserRepository {
 
         UserAuthTable.insert {
             it[UserAuthTable.userId] = insertedId
-            it[UserAuthTable.password_hash] = PasswordHasher.hash(password)
+            it[UserAuthTable.passwordHash] = PasswordHasher.hash(password)
         }
 
         UserTable
@@ -91,15 +91,24 @@ class UserRepositoryImpl : UserRepository {
         id: UUID,
         firstName: String?,
         lastName: String?,
-        email: String?
+        email: String?,
+        newPassword: String?
     ): User? = dbTransactionQuery {
-        val updatedCount = UserTable.update({ UserTable.id eq id }) { stmt ->
-            firstName?.let { stmt[UserTable.firstName] = it }
-            lastName?.let { stmt[UserTable.lastName] = it }
-            email?.let { stmt[UserTable.email] = it }
+        if (firstName != null || lastName != null || email != null) {
+            val updatedCount = UserTable.update({ UserTable.id eq id }) { stmt ->
+                firstName?.let { stmt[UserTable.firstName] = it }
+                lastName?.let { stmt[UserTable.lastName] = it }
+                email?.let { stmt[UserTable.email] = it }
+            }
+            if (updatedCount == 0) return@dbTransactionQuery null
         }
 
-        if (updatedCount == 0) return@dbTransactionQuery null
+        newPassword?.let {
+            UserAuthTable.update({ UserAuthTable.userId eq id }) { stmt ->
+                stmt[UserAuthTable.passwordHash] = PasswordHasher.hash(it)
+                stmt[UserAuthTable.lastPasswordChange] = LocalDateTime.now()
+            }
+        }
 
         UserTable
             .selectAll()
