@@ -15,6 +15,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 import io.ktor.server.application.log
 import org.censusmate.config.Config
+import org.censusmate.data.database.tables.EventTable
 import org.jetbrains.exposed.sql.Schema
 
 object DatabaseFactory {
@@ -33,10 +34,14 @@ object DatabaseFactory {
         Database.connect(dataSource)
 
         transaction {
-            SchemaUtils.createSchema(Schema("auth"))
+            SchemaUtils.createSchema(
+                Schema("auth"),
+                Schema("census")
+            )
             SchemaUtils.createMissingTablesAndColumns(
                 UserTable,
-                UserAuthTable
+                UserAuthTable,
+                EventTable
             )
         }
 
