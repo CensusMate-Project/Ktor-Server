@@ -10,8 +10,8 @@ class GetUsersUseCase(private val userRepository: UserRepository) {
         val safeLimit = if (limit < 1) 10 else limit
         val offset = (safePage - 1) * safeLimit
 
-        val (total, users) = userRepository.findAll(limit, offset)
+        val (total, users) = userRepository.findAll(safeLimit, offset)
 
-        return Pair(users, PaginationDto(offset, limit, total))
+        return Pair(users, PaginationDto(total, safeLimit, offset))
     }
 }

@@ -10,9 +10,9 @@ data class PaginationDto(
 )
 
 fun PaginationDto(
-    offset: Int,
+    total: Int,
     limit: Int,
-    total: Int
+    offset: Int
 ): PaginationDto {
     if (total == 0) {
         return PaginationDto(1, limit, 0, 0)
@@ -21,6 +21,6 @@ fun PaginationDto(
         page = offset / limit + 1,
         limit = limit,
         total = total,
-        pages = (total + limit + 1) / limit
+        pages = (total + limit - 1) / limit
     )
 }
