@@ -26,11 +26,18 @@ class EventRepositoryImpl : EventRepository {
         Pair(total, events)
     }
 
-    override suspend fun findActive(): List<Event> = dbTransactionQuery {
+    override suspend fun findActive(limit: Int, offset: Int): Pair<Int, List<Event>> = dbTransactionQuery {
         val now = LocalDateTime.now()
-        EventTable.selectAll()
+
+        val total = EventTable.selectAll()
+            .where { (EventTable.startDatetime lessEq now) and (EventTable.endDatetime greaterEq now) }
+            .count().toInt()
+
+        val events = EventTable.selectAll()
             .where { (EventTable.startDatetime lessEq now) and (EventTable.endDatetime greaterEq now) }
             .map { it.toEvent() }
+
+        Pair(total, events)
     }
 
     override suspend fun findById(id: UUID): Event? = dbTransactionQuery {

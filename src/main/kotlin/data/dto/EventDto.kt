@@ -15,6 +15,12 @@ data class EventResponseDto(
 )
 
 @Serializable
+data class EventsResponseDto(
+    val events: List<EventResponseDto>,
+    val pagination: PaginationResponseDto
+)
+
+@Serializable
 data class CreateEventRequestDto(
     val name: String,
     @SerialName("start_datetime")
