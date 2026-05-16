@@ -26,3 +26,5 @@ fun ApplicationCall.requireRole(vararg roles: RoleType) {
 }
 
 fun ApplicationCall.callerId(): UUID = requirePrincipal().userId
+
+fun ApplicationCall.callerRole(): RoleType = requirePrincipal().role

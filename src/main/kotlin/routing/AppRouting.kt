@@ -26,6 +26,7 @@ fun Application.configureRouting() {
         route("/api") {
             AppContainer.authController.configure(this)
             AppContainer.userController.configure(this)
+            AppContainer.eventController.configure(this)
         }
     }
 }
