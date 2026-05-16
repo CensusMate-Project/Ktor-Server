@@ -9,28 +9,38 @@ import org.censusmate.domain.model.User
 import org.censusmate.security.principal.UserPrincipal
 import java.util.Date
 import java.util.UUID
+import org.censusmate.Config.JwtConfig as Config
 
 object JwtConfig {
-    private const val SECRET = "my-super-secret-key"
-    const val ISSUER = "ktor-app"
-    private const val AUDIENCE = "mobile-app"
-    private const val VALIDITY = 7L * 24 * 60 * 60 * 1000 // 7 days
+    private lateinit var secret: String
+    lateinit var issuer: String
+    private lateinit var audience: String
+    private var expirationHours: Long = 24
 
-    val verifier: JWTVerifier = JWT
-        .require(Algorithm.HMAC256(SECRET))
-        .withAudience(AUDIENCE)
-        .withIssuer(ISSUER)
-        .build()
+    lateinit var verifier: JWTVerifier
+        private set
+
+    fun init(config: Config) {
+        this.secret = config.secret
+        this.issuer = config.issuer
+        this.audience = config.audience
+        this.expirationHours = config.expirationHours
+        this.verifier = JWT
+            .require(Algorithm.HMAC256(secret))
+            .withIssuer(issuer)
+            .withAudience(audience)
+            .build()
+    }
 
     fun generateToken(user: User): String =
         JWT.create()
-            .withIssuer(ISSUER)
-            .withAudience(AUDIENCE)
+            .withIssuer(issuer)
+            .withAudience(audience)
             .withSubject(user.id.toString())
             .withClaim("email", user.email)
             .withClaim("role", user.role.toDbValue())
-            .withExpiresAt(Date(System.currentTimeMillis() + VALIDITY))
-            .sign(Algorithm.HMAC256(SECRET))
+            .withExpiresAt(Date(System.currentTimeMillis() + expirationHours * 3_600_000L))
+            .sign(Algorithm.HMAC256(secret))
 
     fun validateCredential(credential: JWTCredential): UserPrincipal? {
         val userId = credential.payload.subject

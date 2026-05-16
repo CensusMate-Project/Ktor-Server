@@ -10,7 +10,7 @@ import org.censusmate.security.JwtConfig
 fun Application.configureAuthentication() {
     install(Authentication) {
         jwt("auth-jwt") {
-            realm = JwtConfig.ISSUER
+            realm = JwtConfig.issuer
             verifier { JwtConfig.verifier }
             validate { credential ->
                 JwtConfig.validateCredential(credential)

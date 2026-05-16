@@ -14,16 +14,17 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import io.ktor.server.application.log
+import org.censusmate.Config
 import org.jetbrains.exposed.sql.Schema
 
 object DatabaseFactory {
-    fun init(app: Application) {
+    fun init(app: Application, config: Config.DatabaseConfig) {
         val config = HikariConfig().apply {
-            jdbcUrl = "jdbc:postgresql://127.0.0.1:45432/censusmate?sslmode=disable"
+            jdbcUrl = config.url
             driverClassName = "org.postgresql.Driver"
-            username = "user"
-            password = "password"
-            maximumPoolSize = 10
+            username = config.username
+            password = config.password
+            maximumPoolSize = config.maxPoolSize
             isAutoCommit = false
             transactionIsolation = "TRANSACTION_REPEATABLE_READ"
         }

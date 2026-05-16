@@ -19,14 +19,23 @@ import org.censusmate.plugins.configureContentNegotiation
 import org.censusmate.plugins.configureStatusPages
 import org.censusmate.plugins.json
 import org.censusmate.routing.configureRouting
+import org.censusmate.security.JwtConfig
 
 fun main() {
-    embeddedServer(Netty, port = 3000, host = "127.0.0.1") {
-        module()
+    val config = Config.load()
+
+    embeddedServer(
+        Netty,
+        port = config.server.port,
+        host = "127.0.0.1"
+    ) {
+        module(config)
     }.start(wait = true)
 }
 
-fun Application.module() {
+fun Application.module(config: Config = Config.load()) {
+    JwtConfig.init(config.jwt)
+
     install(OpenApi) {
         schemas {
             generator = SchemaGenerator.kotlinx(json)
@@ -53,7 +62,7 @@ fun Application.module() {
         }
     }
 
-    DatabaseFactory.init(this)
+    DatabaseFactory.init(this, config.database)
     createDefaultAdminIfNotExists()
 
     appModule()
