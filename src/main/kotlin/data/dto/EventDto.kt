@@ -1,6 +1,5 @@
 package org.censusmate.data.dto
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -23,17 +22,13 @@ data class EventsResponseDto(
 @Serializable
 data class CreateEventRequestDto(
     val name: String,
-    @SerialName("start_datetime")
     val startDatetime: String,
-    @SerialName("end_datetime")
     val endDatetime: String
 )
 
 @Serializable
 data class UpdateEventRequestDto(
     val name: String? = null,
-    @SerialName("start_datetime")
     val startDatetime: String? = null,
-    @SerialName("end_datetime")
     val endDatetime: String? = null
 )
