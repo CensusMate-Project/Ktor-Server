@@ -4,6 +4,8 @@ import org.censusmate.data.database.DatabaseFactory.dbTransactionQuery
 import org.censusmate.data.database.tables.HouseholdTable
 import org.censusmate.data.mapper.toHousehold
 import org.censusmate.domain.model.Household
+import org.censusmate.domain.model.HouseholdData
+import org.censusmate.domain.model.HouseholdUpdateData
 import org.censusmate.domain.repository.HouseholdRepository
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
@@ -44,54 +46,34 @@ class HouseholdRepositoryImpl : HouseholdRepository {
             ?.toHousehold()
     }
 
-    override suspend fun create(
-        enumeratorId: UUID,
-        eventId: UUID?,
-        address: String,
-        totalResidents: Int,
-        dwellingType: String?,
-        buildingYear: String?,
-        totalArea: Int?,
-        livingArea: Int?,
-        roomsCount: Int?,
-        notes: String?
-    ): Household = dbTransactionQuery {
-        val id = HouseholdTable.insert {
-            it[HouseholdTable.enumeratorId] = enumeratorId
-            it[HouseholdTable.eventId] = eventId
-            it[HouseholdTable.address] = address
-            it[HouseholdTable.totalResidents] = totalResidents
-            it[HouseholdTable.dwellingType] = dwellingType
-            it[HouseholdTable.buildingYear] = buildingYear
-            it[HouseholdTable.totalArea] = totalArea
-            it[HouseholdTable.livingArea] = livingArea
-            it[HouseholdTable.roomsCount] = roomsCount
-            it[HouseholdTable.notes] = notes
-        }[HouseholdTable.id]
+    override suspend fun create(enumeratorId: UUID, eventId: UUID?, data: HouseholdData): Household =
+        dbTransactionQuery {
+            val id = HouseholdTable.insert {
+                it[HouseholdTable.enumeratorId] = enumeratorId
+                it[HouseholdTable.eventId] = eventId
+                it[HouseholdTable.address] = data.address
+                it[HouseholdTable.totalResidents] = data.totalResidents
+                it[HouseholdTable.dwellingType] = data.dwellingType
+                it[HouseholdTable.buildingYear] = data.buildingYear
+                it[HouseholdTable.totalArea] = data.totalArea
+                it[HouseholdTable.livingArea] = data.livingArea
+                it[HouseholdTable.roomsCount] = data.roomsCount
+                it[HouseholdTable.notes] = data.notes
+            }[HouseholdTable.id]
 
-        HouseholdTable.selectAll().where { HouseholdTable.id eq id }.single().toHousehold()
-    }
+            HouseholdTable.selectAll().where { HouseholdTable.id eq id }.single().toHousehold()
+        }
 
-    override suspend fun update(
-        id: UUID,
-        address: String?,
-        totalResidents: Int?,
-        dwellingType: String?,
-        buildingYear: String?,
-        totalArea: Int?,
-        livingArea: Int?,
-        roomsCount: Int?,
-        notes: String?
-    ): Household? = dbTransactionQuery {
+    override suspend fun update(id: UUID, data: HouseholdUpdateData): Household? = dbTransactionQuery {
         val count = HouseholdTable.update({ HouseholdTable.id eq id }) { stmt ->
-            address?.let { stmt[HouseholdTable.address] = it }
-            totalResidents?.let { stmt[HouseholdTable.totalResidents] = it }
-            dwellingType?.let { stmt[HouseholdTable.dwellingType] = it }
-            buildingYear?.let { stmt[HouseholdTable.buildingYear] = it }
-            totalArea?.let { stmt[HouseholdTable.totalArea] = it }
-            livingArea?.let { stmt[HouseholdTable.livingArea] = it }
-            roomsCount?.let { stmt[HouseholdTable.roomsCount] = it }
-            notes?.let { stmt[HouseholdTable.notes] = it }
+            data.address?.let { stmt[HouseholdTable.address] = it }
+            data.totalResidents?.let { stmt[HouseholdTable.totalResidents] = it }
+            data.dwellingType?.let { stmt[HouseholdTable.dwellingType] = it }
+            data.buildingYear?.let { stmt[HouseholdTable.buildingYear] = it }
+            data.totalArea?.let { stmt[HouseholdTable.totalArea] = it }
+            data.livingArea?.let { stmt[HouseholdTable.livingArea] = it }
+            data.roomsCount?.let { stmt[HouseholdTable.roomsCount] = it }
+            data.notes?.let { stmt[HouseholdTable.notes] = it }
         }
         if (count == 0) return@dbTransactionQuery null
         HouseholdTable.selectAll().where { HouseholdTable.id eq id }.singleOrNull()?.toHousehold()
