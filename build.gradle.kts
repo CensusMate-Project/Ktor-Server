@@ -50,6 +50,13 @@ dependencies {
 
     // Security and password hashing
     implementation("at.favre.lib:bcrypt:0.10.2")
+
+    // DaData API client
+    implementation("ru.marisov:ktor-dadata-client:3.1.1")
+
+    // Ktor client
+    implementation("io.ktor:ktor-client-core-jvm")
+    implementation("io.ktor:ktor-client-cio-jvm")
 }
 
 kotlin {

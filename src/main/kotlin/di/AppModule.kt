@@ -3,9 +3,11 @@ package org.censusmate.di
 import io.ktor.server.application.Application
 import io.ktor.server.application.log
 import org.censusmate.config.Config
+import org.censusmate.controller.AddressController
 import org.censusmate.controller.AuthController
 import org.censusmate.controller.EventController
 import org.censusmate.controller.UserController
+import org.censusmate.data.remote.dadata.DaDataClient
 import org.censusmate.data.repository.EventRepositoryImpl
 import org.censusmate.data.repository.UserRepositoryImpl
 import org.censusmate.domain.repository.EventRepository
@@ -18,6 +20,7 @@ import org.censusmate.domain.usecase.event.GetActiveEventsUseCase
 import org.censusmate.domain.usecase.event.GetEventUseCase
 import org.censusmate.domain.usecase.event.GetEventsUseCase
 import org.censusmate.domain.usecase.event.UpdateEventUseCase
+import org.censusmate.domain.usecase.suggest.SuggestAddressUseCase
 import org.censusmate.domain.usecase.user.BlockUserUseCase
 import org.censusmate.domain.usecase.user.CreateUserUseCase
 import org.censusmate.domain.usecase.user.GetUserUseCase
@@ -29,7 +32,10 @@ object AppContainer {
     lateinit var config: Config
         private set
 
-    val passwordMinLen get() = config.usersConfig.passwordMinLen
+    val passwordMinLen get() = config.users.passwordMinLen
+
+    val daDataClient by lazy { DaDataClient(config.dadata.apiKey, config.dadata.secretKey) }
+    val suggestAddressUseCase by lazy { SuggestAddressUseCase(daDataClient) }
 
     val userRepository: UserRepository by lazy { UserRepositoryImpl() }
     val eventRepository: EventRepository by lazy { EventRepositoryImpl() }
@@ -64,6 +70,7 @@ object AppContainer {
             deleteEventUseCase
         )
     }
+    val addressController: AddressController by lazy { AddressController(suggestAddressUseCase) }
 
     fun init(config: Config) {
         this.config = config
