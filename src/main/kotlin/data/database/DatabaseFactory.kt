@@ -6,6 +6,8 @@ import io.ktor.server.application.Application
 import kotlinx.coroutines.Dispatchers
 import org.censusmate.data.database.tables.UserAuthTable
 import org.censusmate.data.database.tables.UserTable
+import org.censusmate.data.database.tables.PersonTable
+import org.censusmate.data.database.tables.HouseholdTable
 import org.censusmate.security.PasswordHasher
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -41,7 +43,9 @@ object DatabaseFactory {
             SchemaUtils.createMissingTablesAndColumns(
                 UserTable,
                 UserAuthTable,
-                EventTable
+                EventTable,
+                PersonTable,
+                HouseholdTable
             )
         }
 
