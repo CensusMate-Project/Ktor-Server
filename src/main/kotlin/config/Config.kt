@@ -3,14 +3,12 @@ package org.censusmate.config
 data class Config(
     val database: DatabaseConfig,
     val jwt: JwtConfig,
-    val usersConfig: UsersConfig,
+    val dadata: DaDataConfig,
+    val users: UsersConfig,
     val server: ServerConfig
 ) {
     data class DatabaseConfig(
-        val url: String,
-        val username: String,
-        val password: String,
-        val maxPoolSize: Int
+        val url: String, val username: String, val password: String, val maxPoolSize: Int
     )
 
     data class JwtConfig(
@@ -20,13 +18,16 @@ data class Config(
         val expirationHours: Long,
     )
 
+    data class DaDataConfig(
+        val apiKey: String, val secretKey: String
+    )
+
     data class UsersConfig(
         val passwordMinLen: Int
     )
 
     data class ServerConfig(
-        val host: String,
-        val port: Int
+        val host: String, val port: Int
     )
 
     companion object {
@@ -45,6 +46,11 @@ data class Config(
                 expirationHours = System.getenv("JWT_EXPIRATION_HOURS")?.toLongOrNull() ?: 24L
             )
 
+            val dadataConfig = DaDataConfig(
+                apiKey = System.getenv("DADATA_API_KEY") ?: "your-dadata-api-key",
+                secretKey = System.getenv("DADATA_SECRET_KEY") ?: "your-dadata-secret-key"
+            )
+
             val usersConfig = UsersConfig(
                 passwordMinLen = System.getenv("USERS_PASSWORD_MIN_LEN")?.toIntOrNull() ?: 8
             )
@@ -57,7 +63,8 @@ data class Config(
             return Config(
                 database = databaseConfig,
                 jwt = jwtConfig,
-                usersConfig = usersConfig,
+                dadata = dadataConfig,
+                users = usersConfig,
                 server = serverConfig
             )
         }

@@ -27,6 +27,9 @@ fun Application.configureRouting() {
             AppContainer.authController.configure(this)
             AppContainer.userController.configure(this)
             AppContainer.eventController.configure(this)
+            AppContainer.addressController.configure(this)
+            AppContainer.householdController.configure(this)
+            AppContainer.personController.configure(this)
         }
     }
 }
