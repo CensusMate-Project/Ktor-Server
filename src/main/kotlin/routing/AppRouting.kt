@@ -30,6 +30,7 @@ fun Application.configureRouting() {
             AppContainer.addressController.configure(this)
             AppContainer.householdController.configure(this)
             AppContainer.personController.configure(this)
+            AppContainer.statsController.configure(this)
         }
     }
 }

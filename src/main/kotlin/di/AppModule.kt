@@ -8,15 +8,18 @@ import org.censusmate.controller.AuthController
 import org.censusmate.controller.EventController
 import org.censusmate.controller.HouseholdController
 import org.censusmate.controller.PersonController
+import org.censusmate.controller.StatsController
 import org.censusmate.controller.UserController
 import org.censusmate.data.remote.dadata.DaDataClient
 import org.censusmate.data.repository.EventRepositoryImpl
 import org.censusmate.data.repository.HouseholdRepositoryImpl
 import org.censusmate.data.repository.PersonRepositoryImpl
+import org.censusmate.data.repository.StatsRepositoryImpl
 import org.censusmate.data.repository.UserRepositoryImpl
 import org.censusmate.domain.repository.EventRepository
 import org.censusmate.domain.repository.HouseholdRepository
 import org.censusmate.domain.repository.PersonRepository
+import org.censusmate.domain.repository.StatsRepository
 import org.censusmate.domain.repository.UserRepository
 import org.censusmate.domain.usecase.auth.GetMeUseCase
 import org.censusmate.domain.usecase.auth.LoginUseCase
@@ -36,6 +39,7 @@ import org.censusmate.domain.usecase.persons.DeletePersonUseCase
 import org.censusmate.domain.usecase.persons.GetPersonUseCase
 import org.censusmate.domain.usecase.persons.GetPersonsUseCase
 import org.censusmate.domain.usecase.persons.UpdatePersonUseCase
+import org.censusmate.domain.usecase.stats.GetStatsUseCase
 import org.censusmate.domain.usecase.suggest.SuggestAddressUseCase
 import org.censusmate.domain.usecase.user.BlockUserUseCase
 import org.censusmate.domain.usecase.user.CreateUserUseCase
@@ -57,6 +61,7 @@ object AppContainer {
     val eventRepository: EventRepository by lazy { EventRepositoryImpl() }
     val householdRepository: HouseholdRepository by lazy { HouseholdRepositoryImpl() }
     val personRepository: PersonRepository by lazy { PersonRepositoryImpl() }
+    val statsRepository: StatsRepository by lazy { StatsRepositoryImpl() }
 
     val loginUseCase: LoginUseCase by lazy { LoginUseCase(userRepository) }
     val getMeUseCase: GetMeUseCase by lazy { GetMeUseCase(userRepository) }
@@ -78,15 +83,12 @@ object AppContainer {
     val getHouseholdUseCase: GetHouseholdUseCase by lazy { GetHouseholdUseCase(householdRepository) }
     val createHouseholdUseCase: CreateHouseholdUseCase by lazy {
         CreateHouseholdUseCase(
-            householdRepository,
-            eventRepository,
-            suggestAddressUseCase
+            householdRepository, eventRepository, suggestAddressUseCase
         )
     }
     val updateHouseholdUseCase: UpdateHouseholdUseCase by lazy {
         UpdateHouseholdUseCase(
-            householdRepository,
-            suggestAddressUseCase
+            householdRepository, suggestAddressUseCase
         )
     }
     val deleteHouseholdUseCase: DeleteHouseholdUseCase by lazy { DeleteHouseholdUseCase(householdRepository) }
@@ -96,6 +98,8 @@ object AppContainer {
     val createPersonUseCase by lazy { CreatePersonUseCase(personRepository) }
     val updatePersonUseCase by lazy { UpdatePersonUseCase(personRepository, householdRepository) }
     val deletePersonUseCase by lazy { DeletePersonUseCase(personRepository, householdRepository) }
+
+    val getStatsUseCase by lazy { GetStatsUseCase(statsRepository) }
 
     val authController: AuthController by lazy { AuthController(loginUseCase, getMeUseCase) }
     val userController: UserController by lazy {
@@ -123,14 +127,10 @@ object AppContainer {
     }
     val personController: PersonController by lazy {
         PersonController(
-            getPersonsUseCase,
-            getPersonUseCase,
-            createPersonUseCase,
-            updatePersonUseCase,
-            deletePersonUseCase
+            getPersonsUseCase, getPersonUseCase, createPersonUseCase, updatePersonUseCase, deletePersonUseCase
         )
     }
-
+    val statsController by lazy { StatsController(getStatsUseCase) }
 
     fun init(config: Config) {
         this.config = config
