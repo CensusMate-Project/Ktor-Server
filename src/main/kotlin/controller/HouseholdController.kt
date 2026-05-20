@@ -34,7 +34,7 @@ class HouseholdController(
                     get({
                         tags("Households")
                         summary = "Get households list"
-                        description = "Администратор видит все домохозяйства. Агент — только свои."
+                        description = "Администратор видит все домохозяйства. Агент - только свои."
                         request {
                             queryParameter<Int>("page") {
                                 description = "Номер страницы (начиная с 1)"
@@ -145,7 +145,7 @@ class HouseholdController(
                             tags("Households")
                             summary = "Update household"
                             description =
-                                "Агент может обновить только своё домохозяйство. Если передан адрес — валидируется через DaData."
+                                "Агент может обновить только своё домохозяйство. Если передан адрес - валидируется через DaData."
                             request {
                                 pathParameter<String>("id") {
                                     description = "UUID домохозяйства"

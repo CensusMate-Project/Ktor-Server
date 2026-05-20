@@ -7,6 +7,7 @@ import org.censusmate.controller.AddressController
 import org.censusmate.controller.AuthController
 import org.censusmate.controller.EventController
 import org.censusmate.controller.HouseholdController
+import org.censusmate.controller.PersonController
 import org.censusmate.controller.UserController
 import org.censusmate.data.remote.dadata.DaDataClient
 import org.censusmate.data.repository.EventRepositoryImpl
@@ -118,6 +119,15 @@ object AppContainer {
             createHouseholdUseCase,
             updateHouseholdUseCase,
             deleteHouseholdUseCase
+        )
+    }
+    val personController: PersonController by lazy {
+        PersonController(
+            getPersonsUseCase,
+            getPersonUseCase,
+            createPersonUseCase,
+            updatePersonUseCase,
+            deletePersonUseCase
         )
     }
 
