@@ -27,6 +27,12 @@ data class PersonResponseDto(
 )
 
 @Serializable
+data class PersonsResponseDto(
+    val persons: List<PersonResponseDto>,
+    val pagination: PaginationResponseDto
+)
+
+@Serializable
 data class CreatePersonRequestDto(
     val gender: String? = null,
     val birthDate: String,
