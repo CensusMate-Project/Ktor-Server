@@ -11,7 +11,7 @@ import org.censusmate.utils.AppError
 import java.util.UUID
 
 class UpdateHouseholdUseCase(
-    private val repo: HouseholdRepository,
+    private val householdRepository: HouseholdRepository,
     private val suggestAddressUseCase: SuggestAddressUseCase
 ) {
     suspend operator fun invoke(
@@ -19,7 +19,7 @@ class UpdateHouseholdUseCase(
         dto: UpdateHouseholdRequestDto,
         principal: UserPrincipal
     ): Household {
-        val existing = repo.findById(id) ?: throw AppError.NotFound("Household with id=${id} not found")
+        val existing = householdRepository.findById(id) ?: throw AppError.NotFound("Household with id=${id} not found")
 
         if (principal.role != RoleType.ADMINISTRATOR && existing.enumeratorId != principal.userId)
             throw AppError.Forbidden("Access denied")
@@ -47,6 +47,6 @@ class UpdateHouseholdUseCase(
             notes = dto.notes
         )
 
-        return repo.update(id, data) ?: throw AppError.NotFound("Household with id=${id} not found")
+        return householdRepository.update(id, data) ?: throw AppError.NotFound("Household with id=${id} not found")
     }
 }

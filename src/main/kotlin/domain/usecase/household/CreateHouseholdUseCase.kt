@@ -10,8 +10,8 @@ import org.censusmate.security.principal.UserPrincipal
 import org.censusmate.utils.AppError
 
 class CreateHouseholdUseCase(
-    private val householdRepo: HouseholdRepository,
-    private val eventRepo: EventRepository,
+    private val householdRepository: HouseholdRepository,
+    private val eventRepository: EventRepository,
     private val suggestAddressUseCase: SuggestAddressUseCase
 ) {
     suspend operator fun invoke(dto: CreateHouseholdRequestDto, principal: UserPrincipal): Household {
@@ -24,7 +24,7 @@ class CreateHouseholdUseCase(
         if (!suggestion.isValid)
             throw AppError.BadRequest("Address is not specific enough, please provide a house number")
 
-        val activeEvent = eventRepo.findActive(limit = 1).second.firstOrNull()
+        val activeEvent = eventRepository.findActive(limit = 1).second.firstOrNull()
             ?: throw AppError.BadRequest("No active census event")
 
         val data = HouseholdData(
@@ -38,6 +38,6 @@ class CreateHouseholdUseCase(
             notes = dto.notes
         )
 
-        return householdRepo.create(principal.userId, activeEvent.id, data)
+        return householdRepository.create(principal.userId, activeEvent.id, data)
     }
 }
