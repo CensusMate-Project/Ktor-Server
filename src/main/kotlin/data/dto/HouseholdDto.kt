@@ -20,6 +20,12 @@ data class HouseholdResponseDto(
 )
 
 @Serializable
+data class HouseholdsResponseDto(
+    val households: List<HouseholdResponseDto>,
+    val pagination: PaginationResponseDto
+)
+
+@Serializable
 data class CreateHouseholdRequestDto(
     val address: String,
     val totalResidents: Int,
