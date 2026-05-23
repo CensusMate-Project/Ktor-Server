@@ -5,6 +5,7 @@ import io.github.smiley4.ktoropenapi.config.AuthScheme
 import io.github.smiley4.ktoropenapi.config.AuthType
 import io.github.smiley4.ktoropenapi.config.ExampleEncoder
 import io.github.smiley4.ktoropenapi.config.SchemaGenerator
+import io.github.smiley4.schemakenerator.swagger.data.RefType
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
@@ -39,7 +40,9 @@ fun main() {
 fun Application.module() {
     install(OpenApi) {
         schemas {
-            generator = SchemaGenerator.kotlinx(json)
+            generator = SchemaGenerator.kotlinx(json) {
+                referencePath = RefType.SIMPLE
+            }
         }
         examples {
             exampleEncoder = ExampleEncoder.kotlinx(json)
