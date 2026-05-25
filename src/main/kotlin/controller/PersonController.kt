@@ -30,7 +30,7 @@ class PersonController(
     fun configure(route: Route) {
         route.apply {
             authenticate("auth-jwt") {
-                route.route("/households/{householdId}/persons") {
+                route("/households/{householdId}/persons") {
                     get({
                         tags("Persons")
                         summary = "Get persons in household"

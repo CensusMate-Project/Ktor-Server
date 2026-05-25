@@ -14,8 +14,8 @@ import org.censusmate.utils.uuidParam
 
 class StatsController(private val getStatsUseCase: GetStatsUseCase) {
     fun configure(route: Route) {
-        route.route("/stats") {
-            authenticate("auth-jwt") {
+        route.authenticate("auth-jwt") {
+            route.route("/stats") {
                 get("/{id}", {
                     tags("Stats")
                     summary = "Get event statistics"

@@ -30,7 +30,7 @@ class HouseholdController(
     fun configure(route: Route) {
         route.apply {
             authenticate("auth-jwt") {
-                route.route("/households") {
+                route("/households") {
                     get({
                         tags("Households")
                         summary = "Get households list"
